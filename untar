@@ -1,0 +1,69 @@
+#!/usr/local/bin/perl
+
+use strict;
+use warnings;
+use POSIX qw/strftime/;
+use Getopt::Std;
+
+my $rpath;
+our ($opt_h, $opt_v, $opt_V, $opt_q);
+getopts('vV:qh');
+
+&usage if ($opt_h);
+
+my ($verbose, $debug);
+
+$verbose = $opt_v;
+
+if ($opt_V)
+	{ $verbose = $debug = $opt_V;}
+else
+	{ $debug=0; }
+
+open(my $fh, "+>>", '/var/log/untar.log');
+ print $fh localtime() . ": $ENV{'USER'}\n";
+close($fh);
+
+chomp(my $dir = `pwd`); # /var/Customer_Files/$CUSTOMER/$SR
+my $prefix=qw{/var/Customer_Files};
+my $subpath = '';
+($subpath) = $dir =~ m/^$prefix\/(.*)$/; # Regex to match above path
+print "***subpath: $subpath\n" if ($debug >= 1);
+if (!$subpath) { # If not in above path
+ &usage; 
+}
+my $ts = $ARGV[0] || &usage; # Make sure we passed in a troubleshoot;
+
+my $today = strftime('%Y%m%d',localtime); # E.g., YYYYMMDD
+chomp(my $tsdir = `tar -tf $ts | head -n1`); # The top-level directory inside the troubleshoot
+my @dir = split('/', $dir); # Split up $dir into @dir
+my @ts = split('/', $ts); # Split up $ts into @ts
+my $date = $ts[2]; # DATE
+if ($date eq 'today') { # If $date is in 'today' form
+ $date = $today; # Set $date as YYYYMMDD
+}
+$ts = $ts[3]; # FILE.tar.gz
+
+$rpath = "/zstore/uploads/$date/$ts"; # Full path to troubleshoot on multivac
+
+my $tar_opts = "zxf";
+$tar_opts = "v".$tar_opts if ($verbose);
+system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
+system("/usr/bin/ssh nfssupport\@multivac 'find /zstore/CustomerFiles/$subpath -type d -print0 | xargs -0 chmod 770'");
+system("/usr/bin/ssh nfssupport\@multivac 'find /zstore/CustomerFiles/$subpath -type f -print0 | xargs -0 chmod 660'");
+
+print "***chdir to: $dir/$tsdir\n" if ($debug >= 1);
+#chdir("$dir/$tsdir");
+#system("/usr/local/bin/tsanalysis.pl");
+
+exit 0;
+
+sub usage
+{
+	print "usage: $0 [-v][-V <n>][-h][-q][-u] /uploads/DATE/TROUBLESHOOT.tar.gz\n";
+	print "       -v: verbose output\n";
+	print "       -V <n>: debug level <n> output\n";
+	print "       -q: quiet - suppress output\n";
+	print "       -h: print this message, and exit\n";
+	exit 0;
+}
