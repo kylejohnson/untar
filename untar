@@ -45,6 +45,9 @@ if ($date eq 'today') { # If $date is in 'today' form
 $ts = $ts[3]; # FILE.tar.gz
 
 $rpath = "/zstore/uploads/$date/$ts"; # Full path to troubleshoot on multivac
+$rpath = quotemeta($rpath);
+$subpath = quotemeta($subpath);
+
 
 my $tar_opts = "zxf";
 $tar_opts = "v".$tar_opts if ($verbose);
