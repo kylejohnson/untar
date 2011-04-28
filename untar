@@ -68,6 +68,10 @@ if ($model =~ /sensor/i) {
  $model = 'sensor';
 } elsif ($model =~ /defense/i) {
  $model = 'dc';
+} elsif ($model =~ /master/i) {
+ $model = 'mdc';
+} else {
+ $model = 'other';
 }
 
 print "Moving $tsdir to $model.$mgmt_ip...\n";
