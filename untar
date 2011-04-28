@@ -52,7 +52,7 @@ my $tar_opts = "zxf";
 $tar_opts = "v".$tar_opts if ($verbose);
 print "Extracting .tar.gz archive...\n";
 system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
-print "Fixing prmissions on directories...\n";
+print "Fixing permissions on directories...\n";
 system("/usr/bin/ssh nfssupport\@multivac 'find /zstore/CustomerFiles/$subpath -type d -print0 | xargs -0 chmod 770'");
 print "Fixing permissions on files...\n";
 system("/usr/bin/ssh nfssupport\@multivac 'find /zstore/CustomerFiles/$subpath -type f -print0 | xargs -0 chmod 660'");
