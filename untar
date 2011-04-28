@@ -34,11 +34,11 @@ if (!$subpath) { # If not in above path
 }
 my $ts = $ARGV[0] || &usage; # Make sure we passed in a troubleshoot;
 
-my $today = strftime('%Y%m%d',localtime); # E.g., YYYYMMDD
 chomp(my $tsdir = `tar -tf $ts | head -n1`); # The top-level directory inside the troubleshoot
 my @dir = split('/', $dir); # Split up $dir into @dir
 my @ts = split('/', $ts); # Split up $ts into @ts
 my $date = $ts[2]; # DATE
+my $today = strftime('%Y%m%d',localtime); # E.g., YYYYMMDD
 if ($date eq 'today') { # If $date is in 'today' form
  $date = $today; # Set $date as YYYYMMDD
 }
@@ -46,10 +46,12 @@ $ts = $ts[3]; # FILE.tar.gz
 
 $rpath = "/zstore/uploads/$date/$ts"; # Full path to troubleshoot on multivac
 $rpath = quotemeta($rpath);
+$subpath = $subpath . "/$date";
 $subpath = quotemeta($subpath);
 
 my $tar_opts = "zxf";
 $tar_opts = "v".$tar_opts if ($verbose);
+system("/usr/bin/ssh nfssupport\@multivac mkdir '/zstore/CustomerFiles/$subpath'");
 print "Extracting .tar.gz archive...\n";
 system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
 print "Fixing permissions on directories...\n";
@@ -57,11 +59,27 @@ system("/usr/bin/ssh nfssupport\@multivac 'find /zstore/CustomerFiles/$subpath -
 print "Fixing permissions on files...\n";
 system("/usr/bin/ssh nfssupport\@multivac 'find /zstore/CustomerFiles/$subpath -type f -print0 | xargs -0 chmod 660'");
 
+# Get the Model, Management iface number, and IP Address of $mgmt
+chomp(my $model = `grep 'MODEL=' $date/$tsdir/dir-archives/etc/sf/ims.conf | cut -f 2 -d =`);
+chomp(my $mgmt = `grep 'MANAGEMENT=' $date/$tsdir/dir-archives/etc/sf/ims.conf | cut -f 2 -d =`);
+chomp(my $mgmt_ip = `grep -A1 $mgmt $date/$tsdir/'command-outputs/ifconfig\ -a.output' |tail -n1|cut -f 2 -d :|cut -f1 -d ' '`);
+
+if ($model =~ /sensor/i) {
+ $model = 'sensor';
+} elsif ($model =~ /defense/i) {
+ $model = 'dc';
+}
+
+print "Moving $tsdir to $model.$mgmt_ip...\n";
+`mv $date/$tsdir $date/$model.$mgmt_ip`;
+
+$tsdir = "$date/$model.$mgmt_ip";
+
 print "***chdir to: $dir/$tsdir\n" if ($debug >= 1);
 print "Running TS Analysis Script...\n";
-chdir("$dir/$tsdir");
-system("/usr/local/bin/tsanalysis.pl");
+system("cd $dir/$tsdir && /usr/local/bin/tsanalysis.pl");
 
+print "Done!\n";
 exit 0;
 
 sub usage
