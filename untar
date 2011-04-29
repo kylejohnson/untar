@@ -34,10 +34,10 @@ if (!$subpath) { # If not in above path
 }
 
 my $ts = $ARGV[0] || &usage; # /uploads/today/results-123234234.tar.gz
-$ts = quotemeta($ts);
-chomp(my $tsdir = `tar -tf $ts | head -n1`); # The top-level directory inside the troubleshoot
 my @ts = split('/', $ts); # Split up $ts into @ts
 my $date = $ts[2]; # today || yyyymmdd
+$ts = quotemeta($ts);
+chomp(my $tsdir = `tar -tf $ts | head -n1`); # The top-level directory inside the troubleshoot
 $ts = $ts[3]; # FILE.tar.gz
 my @dir = split('/', $dir); # Split up $dir into @dir
 my $today = strftime('%Y%m%d',localtime); # E.g., YYYYMMDD
