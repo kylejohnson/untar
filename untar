@@ -32,20 +32,20 @@ print "***subpath: $subpath\n" if ($debug >= 1);
 if (!$subpath) { # If not in above path
  &usage; 
 }
-my $ts = $ARGV[0] || &usage; # Make sure we passed in a troubleshoot;
 
+my $ts = $ARGV[0] || &usage; # /uploads/today/results-123234234.tar.gz
+$ts = quotemeta($ts);
 chomp(my $tsdir = `tar -tf $ts | head -n1`); # The top-level directory inside the troubleshoot
-my @dir = split('/', $dir); # Split up $dir into @dir
 my @ts = split('/', $ts); # Split up $ts into @ts
-my $date = $ts[2]; # DATE
+my $date = $ts[2]; # today || yyyymmdd
+$ts = $ts[3]; # FILE.tar.gz
+my @dir = split('/', $dir); # Split up $dir into @dir
 my $today = strftime('%Y%m%d',localtime); # E.g., YYYYMMDD
-if ($date eq 'today') { # If $date is in 'today' form
+if ($date =~ /today/) { # If $date is in 'today' form
  $date = $today; # Set $date as YYYYMMDD
 }
-$ts = $ts[3]; # FILE.tar.gz
 
 $rpath = "/zstore/uploads/$date/$ts"; # Full path to troubleshoot on multivac
-$rpath = quotemeta($rpath);
 $subpath = $subpath . "/$date";
 $subpath = quotemeta($subpath);
 
