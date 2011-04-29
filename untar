@@ -46,6 +46,7 @@ if ($date =~ /today/) { # If $date is in 'today' form
 }
 
 $rpath = "/zstore/uploads/$date/$ts"; # Full path to troubleshoot on multivac
+$rpath = quotemeta($rpath);
 $subpath = $subpath . "/$date";
 $subpath = quotemeta($subpath);
 
