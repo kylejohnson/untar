@@ -59,13 +59,11 @@ sub extract_file {
  my $tar_opts = "zxf";
  $tar_opts = "v".$tar_opts if ($verbose);
 
- if ($type == 'troubleshoot') {
+ if ($type == 'troubleshoot' || $type == 'tarball') {
   system("/usr/bin/ssh nfssupport\@multivac mkdir '/zstore/CustomerFiles/$subpath'");
-  print "Extracting .tar.gz archive...\n";
+  print "Extracting -->$type<-- archive...\n";
   system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
   &fix_permissions;
- } elsif ($type == 'tarball') {
-
  } elsif ($type == 'zipfile') {
 
  }
