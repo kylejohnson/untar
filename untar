@@ -50,14 +50,25 @@ $rpath = quotemeta($rpath);
 $subpath = $subpath . "/$date";
 $subpath = quotemeta($subpath);
 
-my $tar_opts = "zxf";
-$tar_opts = "v".$tar_opts if ($verbose);
-system("/usr/bin/ssh nfssupport\@multivac mkdir '/zstore/CustomerFiles/$subpath'");
-print "Extracting .tar.gz archive...\n";
-system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
 
 print "Done!\n";
 exit 0;
+
+sub extract_file {
+ my $type = shift; # Either 'troubleshooot', 'tarball' or 'zipfile'
+ my $tar_opts = "zxf";
+ $tar_opts = "v".$tar_opts if ($verbose);
+
+ if ($type == 'troubleshoot') {
+  system("/usr/bin/ssh nfssupport\@multivac mkdir '/zstore/CustomerFiles/$subpath'");
+  print "Extracting .tar.gz archive...\n";
+  system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
+ } elsif ($type == 'tarball') {
+
+ } elsif ($type == 'zipfile') {
+
+ }
+}
 
 sub call_ts_analysis {
  $tsdir = "$date/$model.$mgmt_ip";
