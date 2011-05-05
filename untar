@@ -5,7 +5,7 @@ use warnings;
 use POSIX qw/strftime/;
 use Getopt::Std;
 
-my ($rpath, $verbose, $debug, $type);
+my ($rpath, $verbose, $debug, $type, $tsdir, $model, $mgmt, $mgmt_ip, $date, $dir);
 my $subpath = '';
 our ($opt_h, $opt_v, $opt_V, $opt_q);
 getopts('vV:qh');
@@ -28,7 +28,7 @@ exit 0;
 ### Subroutines ###
 
 sub check_env {
- chomp(my $dir = `pwd`); # /var/Customer_Files/$CUSTOMER/$SR
+ chomp($dir = `pwd`); # /var/Customer_Files/$CUSTOMER/$SR
  my $prefix=qw{/var/Customer_Files};
  ($subpath) = $dir =~ m/^$prefix\/(.*)$/; # Regex to match above path
  print "***subpath: $subpath\n" if ($debug >= 1);
@@ -38,9 +38,9 @@ sub check_env {
  
  my $ts = $ARGV[0] || &usage; # /uploads/today/results-123234234.tar.gz
  my @ts = split('/', $ts); # Split up $ts into @ts
- my $date = $ts[2]; # today || yyyymmdd
+ $date = $ts[2]; # today || yyyymmdd
  $ts = quotemeta($ts);
- chomp(my $tsdir = `tar -tf $ts | head -n1`); # The top-level directory inside the troubleshoot
+ chomp($tsdir = `tar -tf $ts | head -n1`); # The top-level directory inside the troubleshoot
  $ts = $ts[3]; # FILE.tar.gz
  my @dir = split('/', $dir); # Split up $dir into @dir
  my $today = strftime('%Y%m%d',localtime); # E.g., YYYYMMDD
@@ -96,9 +96,9 @@ sub call_ts_analysis {
 }
 
 sub rename_folder {
- chomp(my $model = `grep 'MODEL=' $date/$tsdir/dir-archives/etc/sf/ims.conf | cut -f 2 -d =`);
- chomp(my $mgmt = `grep 'MANAGEMENT=' $date/$tsdir/dir-archives/etc/sf/ims.conf | cut -f 2 -d =`);
- chomp(my $mgmt_ip = `grep -A1 $mgmt $date/$tsdir/'command-outputs/ifconfig\ -a.output' |tail -n1|cut -f 2 -d :|cut -f1 -d ' '`);
+ chomp($model = `grep 'MODEL=' $date/$tsdir/dir-archives/etc/sf/ims.conf | cut -f 2 -d =`);
+ chomp($mgmt = `grep 'MANAGEMENT=' $date/$tsdir/dir-archives/etc/sf/ims.conf | cut -f 2 -d =`);
+ chomp($mgmt_ip = `grep -A1 $mgmt $date/$tsdir/'command-outputs/ifconfig\ -a.output' |tail -n1|cut -f 2 -d :|cut -f1 -d ' '`);
  
  if ($model =~ /sensor/i) {
   $model = 'sensor';
