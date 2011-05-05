@@ -75,15 +75,15 @@ sub extract_file {
  my $tar_opts = "zxf";
  $tar_opts = "v".$tar_opts if ($verbose);
 
- if ($type == 'troubleshoot' || $type == 'tarball') {
+ if ($type eq 'troubleshoot' || $type eq 'tarball') {
   system("/usr/bin/ssh nfssupport\@multivac mkdir '/zstore/CustomerFiles/$subpath'");
   print "Extracting -->$type<-- archive...\n";
   system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
   &fix_permissions;
-  if ($type == 'troubleshoot') {
+  if ($type eq 'troubleshoot') {
    &rename_folder;
   }
- } elsif ($type == 'zipfile') {
+ } elsif ($type eq 'zipfile') {
 
  }
 }
