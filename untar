@@ -21,6 +21,9 @@ if ($opt_V) {
 print "Done!\n";
 exit 0;
 
+
+### Subroutines ###
+
 sub check_env {
  chomp(my $dir = `pwd`); # /var/Customer_Files/$CUSTOMER/$SR
  my $prefix=qw{/var/Customer_Files};
@@ -46,6 +49,16 @@ sub check_env {
  $rpath = quotemeta($rpath);
  $subpath = $subpath . "/$date";
  $subpath = quotemeta($subpath);
+
+ if ($ts =~ /results-/) {
+  &extract_file('troubleshoot');
+ } elsif ($ts =~ /.tgz/) {
+  &extract_file('tarball');
+ } elsif ($ts =~ /.zip/i) {
+  &extract_file('zipfile');
+ } else {
+  &usage;
+ }
 }
 
 sub log {
