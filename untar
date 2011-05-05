@@ -77,6 +77,9 @@ sub extract_file {
   print "Extracting -->$type<-- archive...\n";
   system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
   &fix_permissions;
+  if ($type == 'troubleshoot') {
+   &rename_folder;
+  }
  } elsif ($type == 'zipfile') {
 
  }
@@ -106,6 +109,8 @@ sub rename_folder {
  
  print "Moving $tsdir to $model.$mgmt_ip...\n";
  `mv $date/$tsdir $date/$model.$mgmt_ip`;
+
+ &call_ts_analysis;
 }
 
 sub fix_permissions {
