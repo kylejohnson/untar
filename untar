@@ -6,6 +6,7 @@ use POSIX qw/strftime/;
 use Getopt::Std;
 
 my ($rpath, $verbose, $debug, $type);
+my $subpath = '';
 our ($opt_h, $opt_v, $opt_V, $opt_q);
 getopts('vV:qh');
 
@@ -23,7 +24,6 @@ exit 0;
 sub check_env {
  chomp(my $dir = `pwd`); # /var/Customer_Files/$CUSTOMER/$SR
  my $prefix=qw{/var/Customer_Files};
- my $subpath = '';
  ($subpath) = $dir =~ m/^$prefix\/(.*)$/; # Regex to match above path
  print "***subpath: $subpath\n" if ($debug >= 1);
  if (!$subpath) { # If not in above path
