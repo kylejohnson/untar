@@ -56,14 +56,15 @@ system("/usr/bin/ssh nfssupport\@multivac mkdir '/zstore/CustomerFiles/$subpath'
 print "Extracting .tar.gz archive...\n";
 system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
 
-$tsdir = "$date/$model.$mgmt_ip";
-
-print "***chdir to: $dir/$tsdir\n" if ($debug >= 1);
-print "Running TS Analysis Script...\n";
-system("cd $dir/$tsdir && /usr/local/bin/tsanalysis.pl");
-
 print "Done!\n";
 exit 0;
+
+sub call_ts_analysis {
+ $tsdir = "$date/$model.$mgmt_ip";
+ print "***chdir to: $dir/$tsdir\n" if ($debug >= 1);
+ print "Running TS Analysis Script...\n";
+ system("cd $dir/$tsdir && /usr/local/bin/tsanalysis.pl");
+}
 
 sub rename_folder {
  chomp(my $model = `grep 'MODEL=' $date/$tsdir/dir-archives/etc/sf/ims.conf | cut -f 2 -d =`);
