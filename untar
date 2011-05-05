@@ -40,7 +40,11 @@ sub check_env {
  my @ts = split('/', $ts); # Split up $ts into @ts
  $date = $ts[2]; # today || yyyymmdd
  $ts = quotemeta($ts);
- chomp($tsdir = `tar -tf $ts | head -n1`); # The top-level directory inside the troubleshoot
+ my $ts_file = $ts[3]; # FILE.tar.gz
+ chomp($ts_file);
+ if ($ts_file =~ /.tar.gz/) {
+  chomp($tsdir = `tar -tf $ts | head -n1`); # The top-level directory inside the troubleshoot
+ }
  $ts = $ts[3]; # FILE.tar.gz
  my @dir = split('/', $dir); # Split up $dir into @dir
  my $today = strftime('%Y%m%d',localtime); # E.g., YYYYMMDD
