@@ -18,6 +18,9 @@ if ($opt_V) {
  $debug=0;
 }
 
+&log;
+&check_env;
+
 print "Done!\n";
 exit 0;
 
