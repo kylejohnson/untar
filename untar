@@ -17,35 +17,36 @@ if ($opt_V) {
  $debug=0;
 }
 
-chomp(my $dir = `pwd`); # /var/Customer_Files/$CUSTOMER/$SR
-my $prefix=qw{/var/Customer_Files};
-my $subpath = '';
-($subpath) = $dir =~ m/^$prefix\/(.*)$/; # Regex to match above path
-print "***subpath: $subpath\n" if ($debug >= 1);
-if (!$subpath) { # If not in above path
- &usage; 
-}
-
-my $ts = $ARGV[0] || &usage; # /uploads/today/results-123234234.tar.gz
-my @ts = split('/', $ts); # Split up $ts into @ts
-my $date = $ts[2]; # today || yyyymmdd
-$ts = quotemeta($ts);
-chomp(my $tsdir = `tar -tf $ts | head -n1`); # The top-level directory inside the troubleshoot
-$ts = $ts[3]; # FILE.tar.gz
-my @dir = split('/', $dir); # Split up $dir into @dir
-my $today = strftime('%Y%m%d',localtime); # E.g., YYYYMMDD
-if ($date =~ /today/) { # If $date is in 'today' form
- $date = $today; # Set $date as YYYYMMDD
-}
-
-$rpath = "/zstore/uploads/$date/$ts"; # Full path to troubleshoot on multivac
-$rpath = quotemeta($rpath);
-$subpath = $subpath . "/$date";
-$subpath = quotemeta($subpath);
-
-
 print "Done!\n";
 exit 0;
+
+sub check_env {
+ chomp(my $dir = `pwd`); # /var/Customer_Files/$CUSTOMER/$SR
+ my $prefix=qw{/var/Customer_Files};
+ my $subpath = '';
+ ($subpath) = $dir =~ m/^$prefix\/(.*)$/; # Regex to match above path
+ print "***subpath: $subpath\n" if ($debug >= 1);
+ if (!$subpath) { # If not in above path
+  &usage; 
+ }
+ 
+ my $ts = $ARGV[0] || &usage; # /uploads/today/results-123234234.tar.gz
+ my @ts = split('/', $ts); # Split up $ts into @ts
+ my $date = $ts[2]; # today || yyyymmdd
+ $ts = quotemeta($ts);
+ chomp(my $tsdir = `tar -tf $ts | head -n1`); # The top-level directory inside the troubleshoot
+ $ts = $ts[3]; # FILE.tar.gz
+ my @dir = split('/', $dir); # Split up $dir into @dir
+ my $today = strftime('%Y%m%d',localtime); # E.g., YYYYMMDD
+ if ($date =~ /today/) { # If $date is in 'today' form
+  $date = $today; # Set $date as YYYYMMDD
+ }
+ 
+ $rpath = "/zstore/uploads/$date/$ts"; # Full path to troubleshoot on multivac
+ $rpath = quotemeta($rpath);
+ $subpath = $subpath . "/$date";
+ $subpath = quotemeta($subpath);
+}
 
 sub log {
  open(my $fh, "+>>", '/var/log/untar.log');
