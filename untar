@@ -20,9 +20,6 @@ if ($opt_V)
 else
 	{ $debug=0; }
 
-open(my $fh, "+>>", '/var/log/untar.log');
- print $fh localtime() . ": $ENV{'USER'}\n";
-close($fh);
 
 chomp(my $dir = `pwd`); # /var/Customer_Files/$CUSTOMER/$SR
 my $prefix=qw{/var/Customer_Files};
@@ -53,6 +50,12 @@ $subpath = quotemeta($subpath);
 
 print "Done!\n";
 exit 0;
+
+sub log {
+ open(my $fh, "+>>", '/var/log/untar.log');
+  print $fh localtime() . ": $ENV{'USER'}\n";
+ close($fh);
+}
 
 sub extract_file {
  my $type = shift; # Either 'troubleshooot', 'tarball' or 'zipfile'
