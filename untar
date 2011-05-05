@@ -5,21 +5,17 @@ use warnings;
 use POSIX qw/strftime/;
 use Getopt::Std;
 
-my $rpath;
+my ($rpath, $verbose, $debug);
 our ($opt_h, $opt_v, $opt_V, $opt_q);
 getopts('vV:qh');
 
 &usage if ($opt_h);
-
-my ($verbose, $debug);
-
 $verbose = $opt_v;
-
-if ($opt_V)
-	{ $verbose = $debug = $opt_V;}
-else
-	{ $debug=0; }
-
+if ($opt_V) {
+ $verbose = $debug = $opt_V;
+} else {
+ $debug=0;
+}
 
 chomp(my $dir = `pwd`); # /var/Customer_Files/$CUSTOMER/$SR
 my $prefix=qw{/var/Customer_Files};
