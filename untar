@@ -37,6 +37,7 @@ sub check_env {
  }
  
  my $ts = $ARGV[0] || &usage; # /uploads/today/results-123234234.tar.gz
+ my $file_type = `file $ts`;
  my @ts = split('/', $ts); # Split up $ts into @ts
  $date = $ts[2]; # today || yyyymmdd
  $ts = quotemeta($ts);
@@ -57,12 +58,14 @@ sub check_env {
  $subpath = $subpath . "/$date";
  $subpath = quotemeta($subpath);
 
- if ($ts =~ /.tgz/) {
+ if ($file_type =~ /tar archive/) {
   &extract_file('tarball');
- } elsif ($ts =~ /.zip/) {
+ } elsif ($file_type =~ /Zip archive/) {
   &extract_file('zipfile');
  } elsif ($tsdir =~ /results-/) {
   &extract_file('troubleshoot');
+ } elsif ($file_type =~ /gzip compressed data/) {
+  &extract_file('gzip');
  } else {
   &usage;
  }
@@ -76,7 +79,8 @@ sub log {
 
 sub extract_file {
  $type = shift; # Either 'troubleshooot', 'tarball' or 'zipfile'
- my $tar_opts = "zxf";
+ my $tar_opts = "xf";
+ $tar_opts = "z".$tar_opts if ($verbose);
  $tar_opts = "v".$tar_opts if ($verbose);
 
  if ($type eq 'troubleshoot') {
@@ -85,7 +89,7 @@ sub extract_file {
   system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
   &fix_permissions;
   &rename_folder;
- } elsif ($type eq 'tarball') {
+ } elsif ($type eq 'gzip') {
   system("/usr/bin/ssh nfssupport\@multivac mkdir -p '/zstore/CustomerFiles/$subpath'");
   print "This is a $type!  Trying to extract anyway...\n";
   system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
@@ -94,6 +98,11 @@ sub extract_file {
   system("/usr/bin/ssh nfssupport\@multivac mkdir -p '/zstore/CustomerFiles/$subpath'");
   print "This is a $type!  Trying to extract anyway...\n";
   system("/usr/bin/ssh nfssupport\@multivac 'cd /zstore/CustomerFiles/$subpath && /usr/local/bin/unzip '$rpath''");
+ } elsif ($type eq 'tarball') {
+  system("/usr/bin/ssh nfssupport\@multivac mkdir -p '/zstore/CustomerFiles/$subpath'");
+  print "This is a $type!  Trying to extract anyway...\n";
+  system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
+  &fix_permissions;
  }
 }
 
