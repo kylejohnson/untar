@@ -43,7 +43,7 @@ sub check_env {
  $ts = quotemeta($ts);
  my $ts_file = $ts[3]; # FILE.tar.gz
  chomp($ts_file);
- if ($ts_file =~ /.tar.gz/) {
+ if ($ts_file =~ /.tar.gz/ || $ts_file =~ /.tgz/) {
   chomp($tsdir = `tar -tf $ts | head -n1`); # The top-level directory inside the troubleshoot
  }
  $ts = $ts[3]; # FILE.tar.gz
