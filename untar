@@ -19,7 +19,9 @@ if ($opt_V) {
 }
 
 &log;
-&check_env;
+foreach (@ARGV) {
+ &check_env;
+}
 
 print "Done!\n";
 exit 0;
@@ -36,7 +38,8 @@ sub check_env {
   &usage; 
  }
  
- my $ts = $ARGV[0] || &usage; # /uploads/today/results-123234234.tar.gz
+ my $ts = $_ || &usage; # /uploads/today/results-123234234.tar.gz
+ print "$ts\n";
  my $file_type = `file $ts`;
  my @ts = split('/', $ts); # Split up $ts into @ts
  $date = $ts[2]; # today || yyyymmdd
