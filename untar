@@ -7,6 +7,7 @@ use Getopt::Std;
 
 my ($rpath, $verbose, $debug, $type, $tsdir, $model, $mgmt, $mgmt_ip, $date, $dir);
 my $subpath = '';
+my $epoch = time(); 
 our ($opt_h, $opt_v, $opt_V, $opt_q);
 getopts('vV:qh');
 
@@ -120,7 +121,7 @@ sub extract_file {
 }
 
 sub call_ts_analysis {
- $tsdir = "$date/$model.$mgmt_ip";
+ $tsdir = "$date/$model.$mgmt_ip-$epoch";
  print "***chdir to: $dir/$tsdir\n" if ($debug >= 1);
  print "Running TS Analysis Script...\n";
  system("cd $dir/$tsdir && /usr/local/bin/tsanalysis.pl");
@@ -140,9 +141,9 @@ sub rename_folder {
  } else {
   $model = 'other';
  }
- 
- print "Moving $tsdir to $model.$mgmt_ip...\n";
- `mv $date/$tsdir $date/$model.$mgmt_ip`;
+
+ print "Moving $tsdir to $model.$mgmt_ip-$epoch...\n";
+ `mv $date/$tsdir $date/$model.$mgmt_ip-$epoch`;
 
  &call_ts_analysis;
 }
