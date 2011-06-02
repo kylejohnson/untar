@@ -13,15 +13,15 @@ getopts('vV:qh');
 &usage if ($opt_h);
 $verbose = $opt_v;
 if ($opt_V) {
- $verbose = $debug = $opt_V;
+ #$verbose = $debug = $opt_V;
+ $debug = $opt_V;
 } else {
  $debug=0;
 }
 
 &log;
-&check_env;
 foreach (@ARGV) {
- &delegate;
+ &check_env;
 }
 
 print "Done!\n";
@@ -38,9 +38,7 @@ sub check_env {
  if (!$subpath) { # If not in above path
   &usage; 
  }
-}
 
-sub delegate {
  my $ts = $_ || &usage; # /uploads/today/results-123234234.tar.gz
  print "$ts\n";
  my $file_type = `file $ts`;
@@ -94,6 +92,7 @@ sub extract_file {
 
  if ($type eq 'troubleshoot') {
   system("/usr/bin/ssh nfssupport\@multivac mkdir -p '/zstore/CustomerFiles/$subpath'");
+  print "***subpath: $subpath\n" if ($debug >= 5);
   print "This is a $type!  Extracting...\n";
   system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
   &fix_permissions;
