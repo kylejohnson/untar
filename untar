@@ -19,8 +19,9 @@ if ($opt_V) {
 }
 
 &log;
+&check_env;
 foreach (@ARGV) {
- &check_env;
+ &delegate;
 }
 
 print "Done!\n";
@@ -37,7 +38,9 @@ sub check_env {
  if (!$subpath) { # If not in above path
   &usage; 
  }
- 
+}
+
+sub delegate {
  my $ts = $_ || &usage; # /uploads/today/results-123234234.tar.gz
  print "$ts\n";
  my $file_type = `file $ts`;
