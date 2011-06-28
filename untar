@@ -154,7 +154,7 @@ sub fix_permissions {
  print "Fixing permissions on files...\n";
  system("/usr/bin/ssh nfssupport\@multivac 'find /zstore/CustomerFiles/$subpath -type f -print0 | xargs -0 chmod 660'");
  print "Reticulating splines...\n";
- system("/usr/bin/ssh nfssupport\@multivac 'find /zstore/CustomerFiles/$subpath -type f -name \"*.gz\" -exec gunzip {} \\;' &");
+ system("/usr/bin/ssh nfssupport\@multivac 'find /zstore/CustomerFiles/$subpath -type f -name \"*.gz\" | parallel -m gunzip'");
 }
 
 sub usage
