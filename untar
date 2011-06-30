@@ -91,30 +91,23 @@ sub extract_file {
  $tar_opts = "v".$tar_opts if ($verbose);
  $tar_opts = "j".$tar_opts if ($type eq 'bzip');
 
+ system("/usr/bin/ssh nfssupport\@multivac mkdir -p '/zstore/CustomerFiles/$subpath'");
+ print "This is a $type!  Trying to extract...\n";
+
  if ($type eq 'troubleshoot') {
-  system("/usr/bin/ssh nfssupport\@multivac mkdir -p '/zstore/CustomerFiles/$subpath'");
   print "***subpath: $subpath\n" if ($debug >= 5);
-  print "This is a $type!  Extracting...\n";
   system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
   &fix_permissions;
   &rename_folder;
  } elsif ($type eq 'gzip') {
-  system("/usr/bin/ssh nfssupport\@multivac mkdir -p '/zstore/CustomerFiles/$subpath'");
-  print "This is a $type!  Trying to extract anyway...\n";
   system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
   &fix_permissions;
  } elsif ($type eq 'zipfile') {
-  system("/usr/bin/ssh nfssupport\@multivac mkdir -p '/zstore/CustomerFiles/$subpath'");
-  print "This is a $type!  Trying to extract anyway...\n";
   system("/usr/bin/ssh nfssupport\@multivac 'cd /zstore/CustomerFiles/$subpath && /usr/local/bin/unzip '$rpath''");
  } elsif ($type eq 'tarball') {
-  system("/usr/bin/ssh nfssupport\@multivac mkdir -p '/zstore/CustomerFiles/$subpath'");
-  print "This is a $type!  Trying to extract anyway...\n";
   system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
   &fix_permissions;
  } elsif ($type eq 'bzip') {
-  system("/usr/bin/ssh nfssupport\@multivac mkdir -p '/zstore/CustomerFiles/$subpath'");
-  print "This is a $type!  Trying to extract anyway...\n";
   system("/usr/bin/ssh nfssupport\@multivac /usr/bin/tar $tar_opts '$rpath' -C '/zstore/CustomerFiles/$subpath'");
   &fix_permissions;
  }
