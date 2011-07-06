@@ -56,6 +56,9 @@ sub check_env {
  my $today = strftime('%Y%m%d',localtime); # E.g., YYYYMMDD
  if ($date =~ /today/) { # If $date is in 'today' form
   $date = $today; # Set $date as YYYYMMDD
+ } elsif ($date =~ /yesterday/) {
+  chomp(my $yesterday = `find /uploads/ -type d | cut -f 3 -d "/" | sort -n | tail -n2 | head -n1`);
+  $date = $yesterday;
  }
  
  $rpath = "/zstore/uploads/$date/$ts"; # Full path to troubleshoot on multivac
