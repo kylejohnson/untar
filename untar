@@ -2,7 +2,6 @@
 
 use strict;
 use warnings;
-use POSIX qw/strftime/;
 use Getopt::Std;
 
 my ($rpath, $verbose, $debug, $type, $tsdir, $model, $mgmt, $mgmt_ip, $date, $dir);
@@ -53,11 +52,12 @@ sub check_env {
  }
  $ts = $ts[3]; # FILE.tar.gz
  my @dir = split('/', $dir); # Split up $dir into @dir
- my $today = strftime('%Y%m%d',localtime); # E.g., YYYYMMDD
+
  if ($date =~ /today/) { # If $date is in 'today' form
+  chomp(my $today = `date "+%Y%m%d"`);
   $date = $today; # Set $date as YYYYMMDD
  } elsif ($date =~ /yesterday/) {
-  chomp(my $yesterday = `find /uploads/ -type d | cut -f 3 -d "/" | sort -n | tail -n2 | head -n1`);
+  chomp(my $yesterday = `date --date="1 day ago" "+%Y%m%d"`);
   $date = $yesterday;
  }
  
